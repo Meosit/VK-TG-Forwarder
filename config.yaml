@@ -1,0 +1,5 @@
+access_token: '<vk_token>'
+group_ids: [<group_id1>,<group_id2>,<group_id3>]
+telegram_chat_id: '<@channelname>'
+telegram_token: '<tg_token>'
+for_last_mins: 10

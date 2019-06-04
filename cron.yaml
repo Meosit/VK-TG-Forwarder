@@ -1,0 +1,4 @@
+cron:
+- description: "VK Feed Refresh"
+  url: '/bot/<tg_token>'
+  schedule: every 10 minutes
