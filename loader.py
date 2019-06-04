@@ -8,7 +8,7 @@ import logging
 class Loader:
     VK_WALL_API_URL = 'https://api.vk.com/method/wall.get'
     VK_VIDEO_URL = 'https://vk.com/video'
-    VK_API_VERSION = '5.45'
+    VK_API_VERSION = '5.40'
 
     def __init__(self, config):
         self.config = config
@@ -34,7 +34,7 @@ class Loader:
         posts_json = response.read()
         posts_obj = ujson.loads(posts_json)
 
-        groups = {o['id']: o['name'] for o in posts_obj['response']['groups'] if o['id'] == wall_id}
+        groups = {o['id']: (o['name'], o['screen_name']) for o in posts_obj['response']['groups'] if o['id'] == wall_id}
 
         # not ads, not repost, from the community, created recently
         def check(o):
@@ -44,12 +44,13 @@ class Loader:
                    and o['post_type'] == 'post'\
                    and 'copy_history' not in o
 
-        logging.info("Loaded " + str(len(posts_obj['response']['items'])) + " from " + unicode(groups[wall_id]))
+        logging.info("Loaded " + str(len(posts_obj['response']['items'])) + " from " + unicode(groups[wall_id][0]))
         posts = [{
             'from': o['from_id'],
-            'name': groups[-o['from_id']],
+            'name': groups[-o['from_id']][0],
             'date': o['date'],
             'text': o['text'],
+            'original_md': '[Go to post](https://vk.com/{}?w=wall{}_{})'.format(groups[-o['from_id']][1], o['from_id'], o['id']),
             'photos': Loader.find_photos(o.get('attachments', [])),
             'gif': Loader.find_gif(o.get('attachments', [])),
             'video': Loader.find_video(o.get('attachments', []))

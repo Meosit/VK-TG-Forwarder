@@ -29,6 +29,7 @@ Trivial GAE application designed to forward VK posts to the public channel using
 ### Behavior
 
 * Supported attachment types: `photo`, `gif`, `video`
+* Each post contains link to the original message
 * Media type priority: `gif` -> `video` -> `photo` (only one media type per post supported) 
 * If the post contains either photo or gif, the text will be truncated to 1024 chars (telegram restriction)
-* Video link pasted _as is_ and forwards to the VK domain (even if it's a youtube video)  
+* Video link pasted _as is_ and forwards to the VK (even if it's a youtube video)  

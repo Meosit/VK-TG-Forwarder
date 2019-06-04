@@ -20,9 +20,11 @@ def hello():
         feed = loader.load_communities_feed(config.group_ids)
         sender.send_posts(feed)
         logging.info("Sent " + str(len(feed)) + " posts")
-    except Exception as e:
-        logging.warning('An error occurred during a request.', e)
-        sender.send_text({'name': 'SERVICE MESSAGE', 'text': '```{}```'.format(traceback.format_exc())})
+    except Exception:
+        e = traceback.format_exc()
+        logging.warning(e)
+        sender.send_text({'name': 'SERVICE MESSAGE', 'text': '```{}```'
+                         .format(traceback.format_exc().replace(config.telegram_token, '<tg_token>'))})
     return 'OK'
 
 

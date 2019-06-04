@@ -23,10 +23,12 @@ class Sender:
 
     def send_text(self, post):
         url = u'{}{}/sendMessage'.format(self.TG_API_URL, self.config.telegram_token)
+        post_text = u"*{}*\n{}\n{}".format(post['name'], post['text'], post['original_md'])
         data = {
             'chat_id': self.config.telegram_chat_id,
-            'text': u"*{}*\n{}".format(post['name'], post['text']),
-            'parse_mode': 'Markdown'
+            'text': post_text,
+            'parse_mode': 'Markdown',
+            'disable_web_page_preview': post_text.count('https://') == 1
         }
         return Sender._post_request(url, data)
 
@@ -34,7 +36,7 @@ class Sender:
         url = u'{}{}/sendMessage'.format(self.TG_API_URL, self.config.telegram_token)
         data = {
             'chat_id': self.config.telegram_chat_id,
-            'text': u"*{}*\n{}\n{}".format(post['name'], post['text'], post['video']),
+            'text': u"*{}*\n{}\n{}\n{}".format(post['name'], post['text'], post['video'], post['original_md']),
             'parse_mode': 'Markdown'
         }
         return Sender._post_request(url, data)
@@ -78,7 +80,10 @@ class Sender:
 
     @staticmethod
     def caption(post):
-        text = u"*{}*\n{}".format(post['name'], post['text'])
+        text = (u"*{}*\n{}\n{}" if len(post['text']) > 0 else u"*{}*{} {}")\
+            .format(post['name'], post['text'], post['original_md'])
+        if len(text) > 1024:
+            text = text[:(len(post['original_md']) + 4)] + '...\n' + post['original_md']
         return text[:1021] + '...' if len(text) > 1024 else text
 
     @staticmethod
