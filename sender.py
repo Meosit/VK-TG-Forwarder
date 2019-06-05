@@ -83,7 +83,7 @@ class Sender:
         text = (u"*{}*\n{}\n{}" if len(post['text']) > 0 else u"*{}*{} {}")\
             .format(post['name'], post['text'], post['original_md'])
         if len(text) > 1024:
-            text = text[:(len(post['original_md']) + 4)] + '...\n' + post['original_md']
+            text = text[:1024-(len(post['original_md']) + 4)] + '...\n' + post['original_md']
         return text[:1021] + '...' if len(text) > 1024 else text
 
     @staticmethod

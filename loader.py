@@ -73,5 +73,5 @@ class Loader:
     # first found video
     @staticmethod
     def find_video(attachments):
-        return next(('{}{}_{}'.format(Loader.VK_VIDEO_URL, o['video']['owner_id'], o['video']['id'])
+        return next(('{}{}\\_{}'.format(Loader.VK_VIDEO_URL, o['video']['owner_id'], o['video']['id'])
                      for o in attachments if o['type'] == 'video'), None)
