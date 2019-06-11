@@ -23,8 +23,8 @@ def hello():
     except Exception:
         e = traceback.format_exc()
         logging.warning(e)
-        sender.send_text({'name': 'SERVICE MESSAGE', 'text': '```{}```'
-                         .format(traceback.format_exc().replace(config.telegram_token, '<tg_token>'))})
+        sender.send_text({'name': 'SERVICE MESSAGE', 'text': u'<pre>{}</pre>'.format(
+            traceback.format_exc().replace(config.telegram_token, '<tg_token>'))}, escape_html=False, with_origin=False)
     return 'OK'
 
 
@@ -34,3 +34,7 @@ def server_error(e):
     logging.exception('An error occurred during a request.')
     return 'An internal error occurred.', 500
 # [END app]
+
+
+if __name__ == '__main__':
+    hello()
