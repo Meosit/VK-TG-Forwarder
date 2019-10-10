@@ -9,14 +9,15 @@ class Config:
     def __init__(self):
         self.config = self._load_config()
 
-        self.access_token = self.config['access_token']
-        self.group_ids = self.config['group_ids']
+        self.vk_group_ids = self.config['vk_group_ids']
+        self.vk_access_token = self.config['vk_access_token']
 
-        self.telegram_token = self.config['telegram_token']
         self.telegram_chat_id = self.config['telegram_chat_id']
+        self.telegram_bot_token = self.config['telegram_bot_token']
 
-        self.for_last_mins = self.config['for_last_mins']
-        pass
+        self.fetch_posts_count = self.config['fetch_posts_count']
+        self.fetch_threshold_minutes = self.config['fetch_threshold_minutes']
+        self.fetch_overlap_seconds = self.config['fetch_overlap_seconds']
 
     @staticmethod
     def _load_config():

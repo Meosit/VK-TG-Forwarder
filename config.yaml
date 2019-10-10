@@ -1,5 +1,9 @@
-access_token: '<vk_token>'
-group_ids: [<group_id1>,<group_id2>,<group_id3>]
-telegram_chat_id: '<@channelname>'
-telegram_token: '<tg_token>'
-for_last_mins: 10
+vk_group_ids: [<group_id1>,<group_id2>] # list of group ids to forward
+vk_access_token: '<vk_token>' # vk access token to load posts from public groups
+
+telegram_chat_id: <@channelname> # target telegram channel id, can be just your own PM chat id
+telegram_bot_token: '<tg_token>' # bot token, which is an admin in the channel above
+
+fetch_posts_count: 10 # load no more than specified number of posts per group id for further filtering by time
+fetch_threshold_minutes: 10 # skip posts older than this threshold
+fetch_overlap_seconds: 5 # additionally add fetch overlap time to retrieve posts on the border of thresholds
