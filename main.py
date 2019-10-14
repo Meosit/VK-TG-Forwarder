@@ -1,6 +1,8 @@
 # [START app]
 import logging
 import time
+from httplib import HTTPException
+
 from google.appengine.api import urlfetch
 from config import Config
 from flask import Flask
@@ -16,7 +18,7 @@ request_mapper = TgRequestMapper(config)
 
 @app.route('/bot/' + config.telegram_bot_token)
 def update_feed():
-    urlfetch.set_default_fetch_deadline(30)
+    urlfetch.set_default_fetch_deadline(20)
     fetch_threshold_date = int(time.time()) - config.fetch_threshold_minutes * 60 - config.fetch_overlap_seconds
     logging.info("Threshold is " + str(fetch_threshold_date) + ", now is " + str(time.time()))
 
@@ -35,11 +37,14 @@ def update_feed():
     for url, data in request_list:
         try:
             request_mapper.post_request(url, data)
-        except:
-            logging.exception("Error while sending post to the telegram")
-            logging.error(str(data))
-            url, data = request_mapper.simple_text_request_info("Unable to send request, please check logs")
-            request_mapper.post_request(url, data)
+        except HTTPException as e:
+            if 'Deadline exceeded while waiting for HTTP response' in str(e):
+                logging.info("Deadline exceeded error captured for " + str(data))
+            else:
+                logging.exception("Error while sending post to the telegram")
+                logging.error(str(data))
+                url, data = request_mapper.simple_text_request_info("Unable to send request, please check logs")
+                request_mapper.post_request(url, data)
     return 'OK'
 
 

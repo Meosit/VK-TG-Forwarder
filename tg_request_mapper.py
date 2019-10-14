@@ -151,13 +151,13 @@ class TgRequestMapper:
                               .format(v['link'], _html_escape(v['title'])), vk_post['videos'])) \
             if vk_post['videos'] is not None else u""
 
-        text = vk_post['text']
+        text = _html_escape(vk_post['text'])
         if vk_post['links'] is not None:
             for link in vk_post['links']:
                 if link.replace('http://', '').replace('https://', '') not in text:
                     text = u'{}\n<b>Link: </b>{}'.format(text, link)
 
-        content = u"{}\n{}\n{}".format(videos, _html_escape(text), pool).strip()
+        content = u"{}\n{}\n{}".format(videos, text, pool).strip()
 
         if len(content) == 0:
             return u"{} {}".format(header, footer)
