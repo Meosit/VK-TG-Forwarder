@@ -1,10 +1,8 @@
-import yaml
-import io
+import json
 
 
 class Config:
-
-    CONFIG_PATH = 'config.yaml'
+    CONFIG_PATH = 'config.json'
 
     def __init__(self):
         self.config = self._load_config()
@@ -22,9 +20,5 @@ class Config:
     @staticmethod
     def _load_config():
         with open(Config.CONFIG_PATH, 'r') as stream:
-            data = yaml.load(stream)
+            data = json.load(stream)
             return data
-
-    def save_config(self):
-        with io.open(Config.CONFIG_PATH, 'w', encoding='utf8') as outfile:
-            yaml.dump(self.config, outfile, default_flow_style=False, allow_unicode=True)

@@ -1,24 +1,17 @@
 # [START app]
 import logging
 import time
-from httplib import HTTPException
 
-from google.appengine.api import urlfetch
 from config import Config
-from flask import Flask
-
-from vk_wall_fetcher import VkWallFetcher
 from tg_request_mapper import TgRequestMapper
+from vk_wall_fetcher import VkWallFetcher
 
-app = Flask(__name__)
 config = Config()
 fetcher = VkWallFetcher(config)
 request_mapper = TgRequestMapper(config)
 
 
-@app.route('/bot/' + config.telegram_bot_token)
-def update_feed():
-    urlfetch.set_default_fetch_deadline(20)
+def update_feed(event, context):
     fetch_threshold_date = int(time.time()) - config.fetch_threshold_minutes * 60 - config.fetch_overlap_seconds
     logging.info("Threshold is " + str(fetch_threshold_date) + ", now is " + str(time.time()))
 
@@ -37,24 +30,10 @@ def update_feed():
     for url, data in request_list:
         try:
             request_mapper.post_request(url, data)
-        except HTTPException as e:
-            if 'Deadline exceeded while waiting for HTTP response' in str(e):
-                logging.info("Deadline exceeded error captured for " + str(data))
-            else:
-                logging.exception("Error while sending post to the telegram")
-                logging.error(str(data))
-                url, data = request_mapper.simple_text_request_info("Unable to send request, please check logs")
-                request_mapper.post_request(url, data)
-    return 'OK'
-
-
-@app.errorhandler(500)
-def server_error(e):
-    # Log the error and stacktrace.
-    logging.exception('An error occurred during a request.')
-    return 'An internal error occurred.', 500
-# [END app]
-
-
-if __name__ == '__main__':
-    update_feed()
+        except:
+            url, data = request_mapper.simple_text_request_info("Unable to send request, please check logs")
+            request_mapper.post_request(url, data)
+    return {
+        'statusCode': 200,
+        'body': ''
+    }

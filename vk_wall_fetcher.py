@@ -1,8 +1,8 @@
+import json
 import logging
 import urllib
-import urllib2
 
-import ujson
+import urllib2
 
 
 class VkWallFetcher:
@@ -16,7 +16,7 @@ class VkWallFetcher:
         wall_posts_json = self._fetch_posts_from_api(group_id)
         if wall_posts_json is None:
             return []
-        wall_posts_object = ujson.loads(wall_posts_json)
+        wall_posts_object = json.loads(wall_posts_json)
         group_meta = next(({'title': o['name'], 'username': o['screen_name']}
                            for o in wall_posts_object['response']['groups'] if o['id'] == group_id), None)
         if group_meta is None:

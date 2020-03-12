@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 import re
-import urllib2
 
-import ujson
+import urllib2
 
 ANY_URL_REGEX = re.compile(r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""")
 HTML_ESCAPE_TABLE = {
@@ -113,7 +113,7 @@ class TgRequestMapper:
                      for i, ph in enumerate(vk_post['photos']) if i < 10]
             album_data = {
                 'chat_id': self.config.telegram_chat_id,
-                'media': ujson.dumps(album)
+                'media': json.dumps(album)
             }
             return [(url, album_data)]
 
@@ -170,7 +170,7 @@ class TgRequestMapper:
         try:
             req = urllib2.Request(url)
             req.add_header('Content-Type', 'application/json')
-            response = urllib2.urlopen(req, ujson.dumps(data))
+            response = urllib2.urlopen(req, json.dumps(data))
             result = response.read()
         finally:
             if response:

@@ -1,0 +1,12 @@
+{
+  "vk_group_ids": [
+    <group_id1>,
+    <group_id2>
+  ],
+  "vk_access_token": "<vk_token>",
+  "telegram_chat_id": "<@channelname>",
+  "telegram_bot_token": "<tg_token>",
+  "fetch_posts_count": 10,
+  "fetch_threshold_minutes": 10,
+  "fetch_overlap_seconds": 5
+}
