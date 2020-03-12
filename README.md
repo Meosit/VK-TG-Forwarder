@@ -4,6 +4,8 @@ Trivial GAE application designed to forward VK posts to the public channel using
 
 ### How to deploy (for beginners)
 
+> :heavy_exclamation_mark:️ **this information might be outdated as the Google has changed it's deployment procedure** 
+
 0. Create GCP project [here](https://console.cloud.google.com/projectcreate) and copy generated *project ID*, `<project_id>` will be used in this example
 0. Create VK application [here](https://vk.com/editapp?act=create)
     * Platform: `Website`
