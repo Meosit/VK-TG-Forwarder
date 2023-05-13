@@ -3,12 +3,17 @@ import logging
 import time
 
 from config import Config
-from tg_request_mapper import TgRequestMapper
+
 from vk_wall_fetcher import VkWallFetcher
+from tg_request_mapper import TgRequestMapper
+
+import json
 
 config = Config()
 fetcher = VkWallFetcher(config)
 request_mapper = TgRequestMapper(config)
+
+logging.getLogger().setLevel(logging.INFO)
 
 
 def update_feed(event, context):
@@ -33,6 +38,7 @@ def update_feed(event, context):
         except:
             url, data = request_mapper.simple_text_request_info("Unable to send request, please check logs")
             request_mapper.post_request(url, data)
+            logging.exception("Failed to process request with data: " + json.dumps(data))
     return {
         'statusCode': 200,
         'body': ''

@@ -1,8 +1,8 @@
 import json
 
-
 class Config:
-    CONFIG_PATH = 'config.json'
+
+    CONFIG_PATH = './config.json'
 
     def __init__(self):
         self.config = self._load_config()

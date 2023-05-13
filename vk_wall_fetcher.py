@@ -1,8 +1,9 @@
-import json
 import logging
-import urllib
+import urllib.request
+import urllib.error
+import urllib.parse
 
-import urllib2
+import json
 
 
 class VkWallFetcher:
@@ -22,8 +23,8 @@ class VkWallFetcher:
         if group_meta is None:
             logging.error("Unable to retrieve group info from " + group_id)
             return []
-        target_posts = filter(lambda p: self._is_valid_for_forward(fetch_threshold_date, group_id, p),
-                              wall_posts_object['response']['items'])
+        target_posts = list(filter(lambda p: self._is_valid_for_forward(fetch_threshold_date, group_id, p),
+                                   wall_posts_object['response']['items']))
         logging.info(u"Loaded {0} posts from {1}".format(str(len(target_posts)), str(group_meta)))
         return map(lambda p: self._map_wall_post(group_meta, p), target_posts)
 
@@ -38,11 +39,11 @@ class VkWallFetcher:
             'v': VkWallFetcher.VK_API_VERSION
         }
         try:
-            data = urllib.urlencode(params)
-            req = urllib2.Request(VkWallFetcher.VK_WALL_API_URL, data)
-            response = urllib2.urlopen(req)
+            data = urllib.parse.urlencode(params).encode("utf-8")
+            req = urllib.request.Request(VkWallFetcher.VK_WALL_API_URL, data)
+            response = urllib.request.urlopen(req)
             return response.read()
-        except urllib2.HTTPError:
+        except urllib.error.HTTPError:
             logging.exception("Cannot load posts for group {}".format(group_id))
             return None
 

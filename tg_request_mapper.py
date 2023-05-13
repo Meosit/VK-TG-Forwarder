@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import json
 import re
-
-import urllib2
+import urllib.request
+import urllib.parse
+import json
 
 ANY_URL_REGEX = re.compile(r"""(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""")
 HTML_ESCAPE_TABLE = {
@@ -49,31 +49,31 @@ class TgRequestMapper:
     def _create_gif_request_info(self, vk_post):
         url = u'{}{}/sendAnimation'.format(self.TG_API_URL, self.config.telegram_bot_token)
         caption = self._post_html(vk_post)
-        gif_data = {
-            'chat_id': self.config.telegram_chat_id,
-            'caption': caption,
-            'parse_mode': 'HTML',
-            'animation': vk_post['gif']
-        }
         if len(caption) >= 1024:
-            gif_data['caption'] = self._short_media_caption(vk_post)
-            return [(url, gif_data), self.simple_text_request_info(caption, disable_link_preview=True)]
+            caption = "<a href=" + vk_post['gif'] + ">&nbsp;</a>" + caption
+            return [self.simple_text_request_info(caption, disable_link_preview=False)]
         else:
+            gif_data = {
+                'chat_id': self.config.telegram_chat_id,
+                'caption': caption,
+                'parse_mode': 'HTML',
+                'animation': vk_post['gif']
+            }
             return [(url, gif_data)]
 
     def _create_photo_request_info(self, vk_post):
-        url = u'{}{}/sendPhoto'.format(self.TG_API_URL, self.config.telegram_bot_token)
         caption = self._post_html(vk_post)
-        photo_data = {
-            'chat_id': self.config.telegram_chat_id,
-            'caption': caption,
-            'parse_mode': 'HTML',
-            'photo': vk_post['photos'][0]
-        }
         if len(caption) >= 1024:
-            photo_data['caption'] = self._short_media_caption(vk_post)
-            return [(url, photo_data), self.simple_text_request_info(caption, disable_link_preview=True)]
+            caption = "<a href=" + vk_post['photos'][0] + ">&nbsp;</a>" + caption
+            return [self.simple_text_request_info(caption, disable_link_preview=False)]
         else:
+            url = u'{}{}/sendPhoto'.format(self.TG_API_URL, self.config.telegram_bot_token)
+            photo_data = {
+                'chat_id': self.config.telegram_chat_id,
+                'caption': caption,
+                'parse_mode': 'HTML',
+                'photo': vk_post['photos'][0]
+            }
             return [(url, photo_data)]
 
     def _create_album_request_info(self, vk_post):
@@ -95,7 +95,7 @@ class TgRequestMapper:
                      for i, ph in enumerate(vk_post['photos']) if i < 10]
             album_data = {
                 'chat_id': self.config.telegram_chat_id,
-                'media': ujson.dumps(album)
+                'media': json.dumps(album)
             }
             return [(url, album_data), self.simple_text_request_info(caption, disable_link_preview=True)]
         else:
@@ -168,9 +168,9 @@ class TgRequestMapper:
     def post_request(url, data):
         response = None
         try:
-            req = urllib2.Request(url)
+            req = urllib.request.Request(url)
             req.add_header('Content-Type', 'application/json')
-            response = urllib2.urlopen(req, json.dumps(data))
+            response = urllib.request.urlopen(req, json.dumps(data).encode("utf-8"))
             result = response.read()
         finally:
             if response:
